@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 export function GetCurrentPosition(){
-    const [position,setPosition] = useState({x:0,y:0})
+    const [position,setPosition] = useState(null)
     useEffect(()=> {
         function adjustLatLng(longitude,latitude,accuracy) {
             const earthRadius = 6371000; // 지구 반지름 (미터)
@@ -16,21 +16,18 @@ export function GetCurrentPosition(){
         }
         function onSuccess(position){
             const {longitude,latitude,accuracy} = position.coords
-            console.log(longitude,latitude,accuracy); //latitude 위도 longitude 경도
+            // console.log(longitude,latitude,accuracy); //latitude 위도 longitude 경도
             // let {minLat,minLng} = adjustLatLng(longitude,latitude,accuracy)
             const range = adjustLatLng(latitude, longitude, accuracy);
-            console.log(`검색 범위: 
-                위도(${range.minLat} ~ ${range.maxLat}), 
-                경도(${range.minLng} ~ ${range.maxLng})`);
+            // console.log(`검색 범위: 
+            //     위도(${range.minLat} ~ ${range.maxLat}), 
+            //     경도(${range.minLng} ~ ${range.maxLng})`);
             setPosition({
-                ...position,
+                // ...position,
                 x:longitude,
                 y:latitude,
                 accuracy:accuracy
             })
-            if(accuracy > 10) {
-
-            }
         }
         function onError(error){
             switch(error.code) {
@@ -54,11 +51,11 @@ export function GetCurrentPosition(){
         const options = {
             enableHighAccuracy: true,
             timeout:10000,
-            maximumAge:0
+            maximumAge:10000
         }
-        const getGeo = navigator.geolocation.watchPosition(onSuccess,onError,options)
+        const getGeo = navigator.geolocation.getCurrentPosition(onSuccess,onError,options)
         return(()=> {
-            console.log('clear watch geo');
+            // console.log('clear watch geo');
             navigator.geolocation.clearWatch(getGeo)
         })
     },[])
